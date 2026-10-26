@@ -24,7 +24,9 @@
 python3 -m http.server 8000
 ```
 
-瀏覽 `http://localhost:8000`。
+瀏覽 `http://localhost:8000`，旅遊速查表位於 `http://localhost:8000/travel/`。
+
+如有 Node.js 18 以上版本，可執行 `node --test travel/smoke.test.cjs` 驗證句庫、數字和主要互動。
 
 ## GitHub Repository 與部署
 
