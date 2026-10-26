@@ -112,6 +112,8 @@ function renderNav(){
       state.query='';
       $('phraseSearch').value='';
       render();
+      const destination = cat.id === 'numbers' ? $('numbersView') : $('resultsSummary');
+      destination.scrollIntoView?.({block:'start',behavior:'auto'});
     });
     nav.append(b);
   }
