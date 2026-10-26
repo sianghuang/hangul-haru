@@ -11,6 +11,7 @@ const source = name => fs.readFileSync(path.join(__dirname, name), 'utf8');
 function setup(){
   const win = {};
   vm.runInNewContext(source('phrases.js'), {window:win});
+  vm.runInNewContext(source('syllables.js'), {window:win});
   class Element {
     constructor(tag='div'){
       this.tag=tag;this.children=[];this.attrs={};this.events={};
@@ -97,5 +98,55 @@ test('Travel page renders categories, supports search and saves favorites',()=>{
   assert.match(document.getElementById('resultsSummary').textContent,/找到 1 句/);
   api.state.category='numbers';api.render();
   assert.equal(document.getElementById('numberGrid').children.length,17);
-  assert.equal(document.getElementById('numberResult').children[1].textContent,'만 이천');
+  const reading=document.getElementById('numberResult').children[1];
+  assert.equal(reading.children.map(word=>word.children.map(pair=>pair.children[0].textContent).join('')).join(' '),'만 이천');
+});
+
+
+test('Every phrase aligns each Korean syllable with the exact existing romanization',()=>{
+  const {window}=setup();
+  for(const category of window.TRAVEL_CATEGORIES){
+    for(const [ko,roman] of category.phrases){
+      const koWords=ko.split(/\s+/),romanWords=roman.split(/\s+/);
+      assert.equal(koWords.length,romanWords.length,ko);
+      koWords.forEach((token,i)=>{
+        const clean=token.replace(/[.!?,~。！？]+$/g,'');
+        const rr=romanWords[i].replace(/[.!?,~。！？]+$/g,'');
+        const aligned=window.TRAVEL_SYLLABLES.align(clean,rr);
+        assert.equal(aligned.length,Array.from(clean).length,clean);
+        assert.ok(aligned.every(pair=>pair.rr.length>0 && pair.ko.length>0),clean);
+        assert.equal(aligned.map(pair=>pair.ko).join(''),clean);
+        assert.equal(aligned.map(pair=>pair.rr).join(''),rr,clean);
+      });
+    }
+  }
+});
+
+test('Common phonetic changes keep their own syllable readings',()=>{
+  const {window}=setup();
+  const cases=[
+    ['안녕하세요','annyeonghaseyo','an nyeong ha se yo'],
+    ['감사합니다','gamsahamnida','gam sa ham ni da'],
+    ['이거','igeo','i geo'],
+    ['주세요','juseyo','ju se yo'],
+    ['화장실이','hwajangsiri','hwa jang si ri'],
+    ['있어요','isseoyo','i sseo yo']
+  ];
+  for(const [ko,rr,expected] of cases){
+    assert.equal(window.TRAVEL_SYLLABLES.align(ko,rr).map(p=>p.rr).join(' '),expected,ko);
+  }
+});
+
+test('Korean syllable + reading columns render without changing word playback',()=>{
+  const {document}=setup();
+  const firstCard=document.getElementById('phrasesView').children[0].children[1].children[0];
+  const wordButton=firstCard.children[1].children[0];
+  const units=wordButton.children[0].children;
+  assert.equal(units.length,5);
+  assert.equal(units[0].children[0].textContent,'안');
+  assert.equal(units[0].children[1].textContent,'an');
+  assert.equal(units[1].children[0].textContent,'녕');
+  assert.equal(units[1].children[1].textContent,'nyeong');
+  assert.ok(typeof wordButton.events.click==='function','Word-level speech still works');
+  assert.ok(typeof firstCard.children[2].children[0].events.click==='function','Sentence-level speech still works');
 });
