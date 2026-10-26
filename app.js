@@ -242,16 +242,32 @@ function updateChart(){const body=$('chartBody');body.replaceChildren();const ar
     btn.addEventListener('click',()=>{changeMode('letters');startQuestion(x.ko);$('card').scrollIntoView({behavior:'smooth',block:'center'})});grid.append(btn)}section.append(grid);body.append(section)}
   $('chartPanel').querySelector('summary span').textContent=$('chartPanel').open?'收合 ↑':'展開 ↓';
 }
-function playAudio(){const p=currentPresentation();if(!p||!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){return}
-  try{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(p.speech);utterance.lang='ko-KR';utterance.rate=.75;const voices=speechSynthesis.getVoices();const v=voices.find(v=>v.lang.toLowerCase().startsWith('ko'));if(v)utterance.voice=v;speechSynthesis.speak(utterance)}catch(e){console.warn('Speech synthesis unavailable:',e)}
+function speakKorean(text){
+  if(!text||!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window))return;
+  try{
+    speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(text);
+    utterance.lang='ko-KR';
+    utterance.rate=.75;
+    const voice=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('ko'));
+    if(voice)utterance.voice=voice;
+    speechSynthesis.speak(utterance);
+  }catch(e){console.warn('Speech synthesis unavailable:',e)}
 }
+function playAudio(){const p=currentPresentation();if(p)speakKorean(p.speech)}
+function playWordAudio(){
+  if(!state.revealed)return;
+  const p=currentPresentation();
+  if(p?.word?.ko)speakKorean(p.word.ko);
+}
+
 function setSettings(){for(const id of Object.keys(defaults)){if(['letterFilter','wordTheme'].includes(id))$(id).value=state.settings[id];else $(id).checked=!!state.settings[id]}}
 function closeSettings(){$('settings').hidden=true;$('settingBtn').setAttribute('aria-expanded','false')}
 function showSettings(){const target=$('settings').hidden;$('settings').hidden=!target;$('settingBtn').setAttribute('aria-expanded',String(target))}
 function showHelp(){if(typeof $('helpDialog').showModal==='function')$('helpDialog').showModal();else $('helpDialog').setAttribute('open','')}
 function closeHelp(){$('helpDialog').close?.();$('helpDialog').removeAttribute('open')}
 function initialize(){setSettings();resetDeck();render();
-  $('mainBtn').addEventListener('click',action);$('skipBtn').addEventListener('click',nextQuestion);$('audioBtn').addEventListener('click',playAudio);
+  $('mainBtn').addEventListener('click',action);$('skipBtn').addEventListener('click',nextQuestion);$('audioBtn').addEventListener('click',playAudio);$('vocabAudioBtn').addEventListener('click',playWordAudio);
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>changeMode(btn.dataset.mode)));
   document.querySelectorAll('[data-go]').forEach(btn=>btn.addEventListener('click',()=>{changeMode(btn.dataset.go);window.scrollTo({top:0,behavior:'smooth'})}));
   Object.keys(defaults).forEach(id=>$(id).addEventListener('change',changeSettings));
@@ -261,7 +277,7 @@ function initialize(){setSettings();resetDeck();render();
   $('helpBtn').addEventListener('click',showHelp);$('closeHelp').addEventListener('click',closeHelp);
   $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters');startQuestion()});
   $('helpDialog').addEventListener('click',ev=>{if(ev.target===$('helpDialog'))closeHelp()});
-  $('audioBtn').disabled=!('speechSynthesis' in window);
+  const ttsUnavailable=!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window);$('audioBtn').disabled=ttsUnavailable;$('vocabAudioBtn').disabled=ttsUnavailable;
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closeSettings();return}
     if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.repeat||$('helpDialog').open||!$('settings').hidden)return;
     if(ev.target.closest?.('button,select,input,textarea,summary,[contenteditable="true"]'))return;
