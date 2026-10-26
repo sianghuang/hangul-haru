@@ -12,3 +12,25 @@ footer{display:flex;justify-content:space-between;gap:16px;border-top:1px solid 
 
 /* Keep category jumps visible below the sticky search/navigation area. */
 .results-summary,#numbersView{scroll-margin-top:140px}
+
+/* Syllable-by-syllable readings: compact ruby-like columns inside the original word tap target. */
+.word-token{flex-direction:row;align-items:center;justify-content:flex-start;gap:0;min-height:55px}
+.aligned-word{display:inline-flex;align-items:flex-start;gap:3px;white-space:nowrap}
+.syllable-unit{display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-width:0;white-space:nowrap}
+.syllable-ko{font-size:21px;font-weight:750;line-height:1.25;color:var(--ink)}
+.syllable-roman{font-size:10px;font-weight:550;line-height:1.2;letter-spacing:.05px;color:#ab7c67}
+.aligned-reading{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px}
+.converted-reading .syllable-ko{font-size:30px}
+.converted-reading .syllable-roman{font-size:12px}
+.number-aligned{justify-content:center;flex-wrap:wrap;gap:2px}
+.number-aligned .syllable-ko{font-size:18px}
+.number-aligned .syllable-roman{font-size:9px}
+.number-chip{min-height:98px}
+@media(max-width:700px){
+.word-token{min-height:54px;padding:4px 2px}
+.aligned-word{gap:3px}
+.syllable-ko{font-size:21px}
+.syllable-roman{font-size:10px}
+.converted-reading .syllable-ko{font-size:28px}
+.number-aligned .syllable-ko{font-size:17px}
+}
