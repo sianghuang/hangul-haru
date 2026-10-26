@@ -71,6 +71,28 @@ const textNode = (tag, className, text) => {
   el.textContent = text;
   return el;
 };
+// Paired Hangul syllables and Latin readings share a single layout unit.
+// A word remains one click/tap target so its natural joined audio is retained.
+function makeAlignedWord(word, roman){
+  const group=textNode('span','aligned-word','');
+  group.lang='ko';
+  const clean=word.replace(/[.!?,~。！？]+$/g,'');
+  const punctuation=word.slice(clean.length);
+  const readings=window.TRAVEL_SYLLABLES.align(clean,roman.replace(/[.!?,~。！？]+$/g,''));
+  readings.forEach((unit,i)=>{
+    const pair=textNode('span','syllable-unit','');
+    pair.append(textNode('span','syllable-ko',unit.ko+(i===readings.length-1?punctuation:'')));
+    pair.append(textNode('span','syllable-roman',unit.rr));
+    group.append(pair);
+  });
+  return group;
+}
+function makeAlignedReading(korean,roman){
+  const line=textNode('div','aligned-reading','');
+  const words=korean.trim().split(/\s+/),readings=roman.trim().split(/\s+/);
+  words.forEach((word,i)=>line.append(makeAlignedWord(word,readings[i]||'')));
+  return line;
+}
 const phraseId = (cat,ko) => cat + ':' + ko;
 function persistFavorites(){
   try {localStorage.setItem(FAVORITES_KEY,JSON.stringify([...state.favorites]));} catch { /* optional */ }
@@ -147,8 +169,7 @@ function createPhrase(entry, catId){
     b.disabled=!SPEECH_OK;
     b.setAttribute('aria-label','播放單詞 '+cleaned);
     b.title='點按播放：'+cleaned;
-    b.append(textNode('span','word-ko',word));
-    if(romans[i])b.append(textNode('span','word-roman',romans[i]));
+    b.append(makeAlignedWord(word,romans[i]||''));
     b.addEventListener('click',()=>speak(cleaned));
     line.append(b);
   });
@@ -255,9 +276,9 @@ function renderNumberResult(){
   }
   const n=Number(raw);
   const value=native?nativeNumber(n,$('counterSelect').value):sinoNumber(n);
-  const ko=textNode('strong','converted-ko',value.ko);
-  ko.lang='ko';
-  host.append(textNode('span','number-label',native?'固有數字':'漢字數字'),ko,textNode('span','converted-rr',value.rr));
+  const reading=makeAlignedReading(value.ko,value.rr);
+  reading.classList.add('converted-reading');
+  host.append(textNode('span','number-label',native?'固有數字':'漢字數字'),reading);
   const play=textNode('button','sentence-play','♫　聽數字');
   play.type='button';play.disabled=!SPEECH_OK;
   play.setAttribute('aria-label','播放韓文數字 '+value.ko);
@@ -281,8 +302,9 @@ function renderNumberReference(){
     const btn=textNode('button','number-chip','');
     btn.type='button';btn.disabled=!SPEECH_OK;
     btn.append(textNode('span','number-value',number));
-    const label=textNode('strong','number-ko',ko);label.lang='ko';btn.append(label);
-    btn.append(textNode('small','number-rr',rr));
+    const aligned=makeAlignedWord(ko,rr);
+    aligned.classList.add('number-aligned');
+    btn.append(aligned);
     btn.setAttribute('aria-label','播放 '+number+'，'+ko);
     btn.addEventListener('click',()=>speak(ko));
     grid.append(btn);
