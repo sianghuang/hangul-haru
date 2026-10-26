@@ -1,0 +1,152 @@
+'use strict';
+// Practical, polite South Korean travel phrases.
+// Each entry: Korean, learner-friendly Revised Romanization, Traditional Chinese.
+// Word buttons use Korean whitespace groups (eojeol), not syllable-by-syllable audio.
+window.TRAVEL_CATEGORIES = [
+  {id:'essentials', label:'馬上用', sub:'到韓國先記住這幾句', phrases:[
+    ['안녕하세요.','annyeonghaseyo.','您好／你好'],
+    ['감사합니다.','gamsahamnida.','謝謝您'],
+    ['죄송합니다.','joesonghamnida.','不好意思／對不起'],
+    ['괜찮아요.','gwaenchanayo.','沒關係／不用了'],
+    ['네, 맞아요.','ne, majayo.','對，沒錯'],
+    ['아니요, 괜찮아요.','aniyo, gwaenchanayo.','不用了，謝謝'],
+    ['잠시만요.','jamsimanyo.','請稍等／借過一下'],
+    ['저기요!','jeogiyo!','不好意思！（叫服務人員）'],
+    ['이거 주세요.','igeo juseyo.','請給我這個'],
+    ['얼마예요?','eolmayeyo?','多少錢？'],
+    ['화장실이 어디예요?','hwajangsiri eodiyeyo?','廁所在哪裡？'],
+    ['영어 할 수 있어요?','yeongeo hal su isseoyo?','您會說英文嗎？']
+  ]},
+  {id:'food', label:'餐廳', sub:'入座、點餐、飲食限制', phrases:[
+    ['한 명이에요.','han myeongieyo.','一個人用餐'],
+    ['두 명이에요.','du myeongieyo.','兩個人用餐'],
+    ['자리 있어요?','jari isseoyo?','還有位子嗎？'],
+    ['예약했어요.','yeyakaesseoyo.','我有訂位'],
+    ['메뉴판 주세요.','menyupan juseyo.','請給我菜單'],
+    ['추천 메뉴가 뭐예요?','chucheon menyuga mwoyeyo?','推薦什麼餐點？'],
+    ['이거 하나 주세요.','igeo hana juseyo.','這個請給我一份'],
+    ['물 좀 주세요.','mul jom juseyo.','請給我一些水'],
+    ['안 맵게 해 주세요.','an maepge hae juseyo.','請做成不辣'],
+    ['덜 맵게 해 주세요.','deol maepge hae juseyo.','請做得不那麼辣'],
+    ['고수 빼 주세요.','gosu ppae juseyo.','請不要加香菜'],
+    ['고기 안 먹어요.','gogi an meogeoyo.','我不吃肉'],
+    ['알레르기가 있어요.','allereugiga isseoyo.','我有食物過敏'],
+    ['포장해 주세요.','pojanghae juseyo.','請幫我外帶'],
+    ['계산해 주세요.','gyesanhae juseyo.','麻煩幫我結帳'],
+    ['정말 맛있어요!','jeongmal masisseoyo!','真的很好吃！']
+  ]},
+  {id:'cafe', label:'咖啡甜點', sub:'外帶、甜度與飲品', phrases:[
+    ['아이스 아메리카노 하나 주세요.','aiseu amerikano hana juseyo.','請給我一杯冰美式'],
+    ['따뜻한 라떼 주세요.','ttatteuthan ratte juseyo.','請給我熱拿鐵'],
+    ['디카페인 있어요?','dikapein isseoyo?','有無咖啡因的嗎？'],
+    ['얼음 빼 주세요.','eoreum ppae juseyo.','請去冰'],
+    ['얼음 조금만 넣어 주세요.','eoreum jogeumman neoeo juseyo.','請少冰'],
+    ['덜 달게 해 주세요.','deol dalge hae juseyo.','請做得不那麼甜'],
+    ['여기서 먹을게요.','yeogiseo meogeulgeyo.','我要內用'],
+    ['가지고 갈게요.','gajigo galgeyo.','我要外帶'],
+    ['이 디저트 하나 주세요.','i dijeoteu hana juseyo.','請給我一份這個甜點']
+  ]},
+  {id:'transport', label:'交通', sub:'地鐵、計程車、問路', phrases:[
+    ['지하철역이 어디예요?','jihacheolyeogi eodiyeyo?','地鐵站在哪裡？'],
+    ['이 버스 맞아요?','i beoseu majayo?','是這班公車嗎？'],
+    ['어느 출구로 나가요?','eoneu chulguro nagayo?','要從哪個出口出去？'],
+    ['이쪽으로 가면 돼요?','ijjogeuro gamyeon dwaeyo?','往這邊走對嗎？'],
+    ['여기까지 가 주세요.','yeogikkaji ga juseyo.','請載我到這裡（指地圖）'],
+    ['여기서 내려 주세요.','yeogiseo naeryeo juseyo.','請在這裡讓我下車'],
+    ['택시 불러 주세요.','taeksi bulleo juseyo.','請幫我叫計程車'],
+    ['얼마나 걸려요?','eolmana geollyeoyo?','大概需要多久？'],
+    ['걸어서 갈 수 있어요?','georeoseo gal su isseoyo?','可以走路過去嗎？'],
+    ['공항까지 얼마예요?','gonghangkkaji eolmayeyo?','到機場多少錢？'],
+    ['교통카드 충전해 주세요.','gyotongkadeu chungjeonhae juseyo.','請幫我加值交通卡'],
+    ['길을 잃었어요.','gireul ireosseoyo.','我迷路了']
+  ]},
+  {id:'hotel', label:'住宿', sub:'入住、寄放行李、設施', phrases:[
+    ['체크인할게요.','chekeuinh algeyo.','我要辦理入住'],
+    ['제 이름으로 예약했어요.','je ireumeuro yeyakaesseoyo.','我是用自己的名字訂房的'],
+    ['여권 여기 있어요.','yeogwon yeogi isseoyo.','護照在這裡'],
+    ['짐을 맡길 수 있나요?','jimeul matgil su innayo?','可以寄放行李嗎？'],
+    ['체크아웃은 몇 시예요?','chekeuauteun myeot siyeyo?','幾點退房？'],
+    ['늦게 체크아웃할 수 있나요?','neutge chekeu authal su innayo?','可以延後退房嗎？'],
+    ['와이파이 비밀번호가 뭐예요?','waipai bimilbeonhoga mwoyeyo?','Wi-Fi 密碼是什麼？'],
+    ['에어컨이 안 돼요.','eeokeoni an dwaeyo.','冷氣不能使用'],
+    ['수건 좀 더 주세요.','sugeon jom deo juseyo.','請再給我一些毛巾'],
+    ['뜨거운 물이 안 나와요.','tteugeoun muri an nawayo.','沒有熱水'],
+    ['택시를 불러 주실 수 있나요?','taeksireul bulleo jusil su innayo?','可以幫我叫計程車嗎？']
+  ]},
+  {id:'shopping', label:'購物', sub:'試穿、尺寸、退稅', phrases:[
+    ['이거 얼마예요?','igeo eolmayeyo?','這個多少錢？'],
+    ['다른 색 있어요?','dareun saek isseoyo?','有其他顏色嗎？'],
+    ['다른 사이즈 있어요?','dareun saijeu isseoyo?','有其他尺寸嗎？'],
+    ['입어 봐도 돼요?','ibeo bwado dwaeyo?','可以試穿嗎？'],
+    ['신어 봐도 돼요?','sineo bwado dwaeyo?','可以試鞋嗎？'],
+    ['새 제품 있어요?','sae jepum isseoyo?','有全新的商品嗎？'],
+    ['이거 보여 주세요.','igeo boyeo juseyo.','可以拿這個給我看嗎？'],
+    ['조금 더 작은 거 있어요?','jogeum deo jageun geo isseoyo?','有再小一點的嗎？'],
+    ['택스 리펀드 돼요?','taekseu ripeondeu dwaeyo?','可以退稅嗎？'],
+    ['봉투 주세요.','bongtu juseyo.','請給我袋子'],
+    ['그냥 구경할게요.','geunyang gugyeonghalgeyo.','我先看看就好'],
+    ['환불할 수 있어요?','hwanbulhal su isseoyo?','可以退款嗎？']
+  ]},
+  {id:'money', label:'付款', sub:'刷卡、現金、收據', phrases:[
+    ['카드 돼요?','kadeu dwaeyo?','可以刷卡嗎？'],
+    ['현금만 돼요?','hyeongeumman dwaeyo?','只能付現金嗎？'],
+    ['카드로 계산할게요.','kadeuro gyesanhalgeyo.','我要刷卡結帳'],
+    ['현금으로 낼게요.','hyeongeumeuro naelgeyo.','我要付現金'],
+    ['나눠서 계산할 수 있어요?','nanwoseo gyesanhal su isseoyo?','可以分開結帳嗎？'],
+    ['영수증 주세요.','yeongsujeung juseyo.','請給我收據'],
+    ['잔돈 주세요.','jandon juseyo.','請找零'],
+    ['할인돼요?','harindwaeyo?','有折扣嗎？'],
+    ['가격을 다시 확인해 주세요.','gagyeogeul dasi hwaginhae juseyo.','請再確認價格']
+  ]},
+  {id:'activities', label:'景點', sub:'門票、拍照、排隊', phrases:[
+    ['표 한 장 주세요.','pyo han jang juseyo.','請給我一張票'],
+    ['입장료가 얼마예요?','ipjangnyoga eolmayeyo?','門票多少錢？'],
+    ['지금 들어갈 수 있어요?','jigeum deureogal su isseoyo?','現在可以進去嗎？'],
+    ['몇 시에 문 닫아요?','myeot sie mun dadayo?','幾點關門？'],
+    ['사진 찍어도 돼요?','sajin jjigeodo dwaeyo?','可以拍照嗎？'],
+    ['사진 좀 찍어 주실래요?','sajin jom jjigeo jusillaeyo?','可以幫我拍張照嗎？'],
+    ['예약해야 해요?','yeyakaeya haeyo?','需要預約嗎？'],
+    ['줄은 어디서 서요?','jureun eodiseo seoyo?','在哪裡排隊？'],
+    ['여기 앉아도 돼요?','yeogi anjado dwaeyo?','可以坐這裡嗎？'],
+    ['한국어 안내만 있어요?','hangugeo annaeman isseoyo?','只有韓文導覽嗎？']
+  ]},
+  {id:'communication', label:'溝通', sub:'聽不懂、翻譯、確認', phrases:[
+    ['한국어를 잘 못해요.','hangugeoreul jal mothaeyo.','我韓文不太好'],
+    ['천천히 말씀해 주세요.','cheoncheonhi malsseumhae juseyo.','請講慢一點'],
+    ['다시 말씀해 주세요.','dasi malsseumhae juseyo.','請再說一次'],
+    ['이해 못 했어요.','ihae mot haesseoyo.','我沒有聽懂'],
+    ['번역기를 써도 될까요?','beonyeokgireul sseodo doelkkayo?','可以使用翻譯軟體嗎？'],
+    ['여기에 써 주세요.','yeogie sseo juseyo.','請寫在這裡'],
+    ['이게 무슨 뜻이에요?','ige museun tteusieyo?','這是什麼意思？'],
+    ['맞는지 확인해 주세요.','manneunji hwaginhae juseyo.','請幫我確認對不對'],
+    ['한국 사람 아니에요.','hanguk saram anieyo.','我不是韓國人'],
+    ['대만에서 왔어요.','daemaneseo wasseoyo.','我來自台灣'],
+    ['혼자 여행해요.','honja yeohaenghaeyo.','我一個人旅行'],
+    ['정말 감사합니다.','jeongmal gamsahamnida.','真的非常感謝']
+  ]},
+  {id:'emergency', label:'緊急', sub:'生病、失物、求助', phrases:[
+    ['도와주세요!','dowajuseyo!','救救我／請幫忙！'],
+    ['병원이 어디예요?','byeongwoni eodiyeyo?','醫院在哪裡？'],
+    ['약국이 어디예요?','yakgugi eodiyeyo?','藥局在哪裡？'],
+    ['몸이 아파요.','momi apayo.','我身體不舒服'],
+    ['배가 아파요.','baega apayo.','我肚子痛'],
+    ['열이 나요.','yeori nayo.','我發燒了'],
+    ['구급차를 불러 주세요.','gugeupchareul bulleo juseyo.','請叫救護車'],
+    ['경찰을 불러 주세요.','gyeongchareul bulleo juseyo.','請叫警察'],
+    ['여권을 잃어버렸어요.','yeogwoneul ireobeoryeosseoyo.','我遺失了護照'],
+    ['휴대폰을 잃어버렸어요.','hyudaeponeul ireobeoryeosseoyo.','我手機遺失了'],
+    ['알레르기가 있어요.','allereugiga isseoyo.','我有過敏'],
+    ['여기가 아파요.','yeogiga apayo.','我這裡會痛（指部位）']
+  ]},
+  {id:'social', label:'日常交友', sub:'認識朋友、基本閒聊', phrases:[
+    ['이름이 뭐예요?','ireumi mwoyeyo?','你叫什麼名字？'],
+    ['반가워요.','bangawoyo.','很高興認識你'],
+    ['어디에서 왔어요?','eodieseo wasseoyo?','你從哪裡來？'],
+    ['여기 처음이에요.','yeogi cheoumieyo.','我是第一次來這裡'],
+    ['추천할 만한 곳 있어요?','chucheonhal manhan got isseoyo?','有推薦的地方嗎？'],
+    ['오늘 날씨 좋네요.','oneul nalssi jonneyo.','今天天氣真好'],
+    ['재미있어요!','jaemiisseoyo!','很有趣！'],
+    ['또 만나요.','tto mannayo.','下次見'],
+    ['좋은 하루 보내세요.','joeun haru bonaeseyo.','祝你有美好的一天']
+  ]}
+];
