@@ -133,7 +133,7 @@ function createPhrase(entry, catId){
     if(state.favorites.has(id))state.favorites.delete(id);else state.favorites.add(id);
     persistFavorites(); render();
   });
-  top.append(fav);
+  if(catId!=='numbers')top.append(fav);
   card.append(top);
   const line=textNode('div','word-line','');
   line.setAttribute('lang','ko');
