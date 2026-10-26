@@ -337,7 +337,7 @@ function initialize(){
   $('chartDialog').addEventListener('click',ev=>{if(ev.target===$('chartDialog'))$('chartDialog').close()});
   $('helpBtn').addEventListener('click',showHelp);
   $('closeHelp').addEventListener('click',closeHelp);
-  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters');startQuestion()});
+  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters');if(!state.started)startQuestion()});
   $('helpDialog').addEventListener('click',ev=>{if(ev.target===$('helpDialog'))closeHelp()});
   const unavailable=!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window);
   $('audioBtn').disabled=unavailable;
