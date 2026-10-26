@@ -25,22 +25,19 @@ python3 -m http.server 8000
 
 瀏覽 `http://localhost:8000`。
 
-## 放到新的 GitHub Repository
+## GitHub Repository 與部署
 
-1. 登入 GitHub，建立**新的 Public Repository**：`hangul-haru`（不要選 `kana-biyori`）。
-2. 在這個資料夾中執行：
+- Repository：<https://github.com/sianghuang/hangul-haru>
+- 網址（啟用 Pages 後）：<https://sianghuang.github.io/hangul-haru/>
 
-```bash
-git init
-git add index.html style.css app.js README.md
-git commit -m "Launch Hangul Haru Korean learning website"
-git branch -M main
-git remote add origin https://github.com/sianghuang/hangul-haru.git
-git push -u origin main
-```
+若 GitHub Pages 尚未開啟，請至本 Repository：
 
-3. 至 GitHub 新專案 **Settings → Pages → Build and deployment → Deploy from a branch → main / (root) → Save**。
-4. 網站網址為 `https://sianghuang.github.io/hangul-haru/`（啟用 Pages 且成功部署後才能存取）。
+1. **Settings → Pages**
+2. 在 **Build and deployment** 下，**Source** 選 **Deploy from a branch**。
+3. **Branch** 選 `main`，資料夾選 `/(root)`，按 **Save**。
+4. 等待 GitHub 顯示部署成功後，即可使用上述網址。
+
+此專案只包含四個純前端檔案，不依賴日文 `kana-biyori` 專案，也不需要任何後端服務。
 
 ## 檔案
 
