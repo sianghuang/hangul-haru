@@ -185,14 +185,16 @@ function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Mat
 function resetDeck(){const all=pool();state.deck=state.settings.random?shuffle(all):all;state.index=0}
 function takeQuestion(exact){if(!state.deck.length||state.index>=state.deck.length)resetDeck();if(exact){const candidate=pool().find(x=>x.ko===exact);if(candidate)return candidate}if(!state.deck.length)return null;const next=state.deck[state.index++];if(state.current&&state.deck.length>1&&next.ko===state.current.ko){const replacement=state.deck[state.index%state.deck.length];if(replacement&&replacement.ko!==next.ko)return replacement}return next}
 function startQuestion(exact){state.current=takeQuestion(exact);state.started=!!state.current;state.revealed=false;render()}
-function nextQuestion(){startQuestion()}
+function nextQuestion(){if(state.started)startQuestion()}
 function reveal(){if(!state.current||state.revealed)return;state.revealed=true;if(state.today!==TODAY()){state.today=TODAY();state.todayCount=0}state.todayCount++;state.seen[key(state.current)]=true;persist();render();if(state.settings.autoplay)playAudio()}
 function action(){if(!state.started)startQuestion();else if(!state.revealed)reveal();else nextQuestion()}
 function changeMode(mode, exact){
   if(!['letters','syllables','words'].includes(mode))return;
+  const shouldBegin=state.started||Boolean(exact);
   state.mode=mode;
   resetDeck();
-  startQuestion(exact);
+  if(shouldBegin)startQuestion(exact);
+  else {state.current=null;state.revealed=false;render()}
 }
 function changeSettings(){
   for(const id of Object.keys(defaults)){
@@ -200,7 +202,8 @@ function changeSettings(){
   }
   persist();
   resetDeck();
-  startQuestion();
+  if(state.started)startQuestion();
+  else render();
 }
 function findWordForLetter(letter){const match=(w)=>[...w.ko].some(ch=>{const p=parts(ch);return p&&(letter.type==='vowel'?p.v===letter.index:p.l===letter.index)});const candidates=WORDS.filter(match);return candidates.sort((a,b)=>a.ko.replace(/\s/g,'').length-b.ko.replace(/\s/g,'').length)[0]||WORDS[0]}
 const SIMPLE_ONSET=['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
@@ -224,12 +227,20 @@ function render(){
     b.classList.toggle('active',active);
     b.setAttribute('aria-selected',String(active));
   });
-  $('question').hidden=state.revealed;
-  $('answer').hidden=!state.revealed;
-  $('mainBtn').innerHTML=(state.revealed?'下一題':'揭曉答案')+' <span>→</span>';
-  $('cardCount').textContent=String(Math.max(1,state.index)).padStart(2,'0')+' / '+state.deck.length;
-  $('question').classList.toggle('word-question',state.mode==='words');
+  $('question').hidden=state.started&&state.revealed;
+  $('answer').hidden=!state.started||!state.revealed;
+  $('mainBtn').innerHTML=(state.started?(state.revealed?'下一題':'揭曉答案'):'開始練習')+' <span>→</span>';
+  $('cardCount').textContent=state.started?String(Math.max(1,state.index)).padStart(2,'0')+' / '+state.deck.length:'尚未開始';
+  $('skipBtn').hidden=!state.started;
+  $('shortcuts').hidden=!state.started;
+  $('question').classList.toggle('is-welcome',!state.started);
+  $('question').classList.toggle('word-question',state.started&&state.mode==='words');
   $('answer').classList.toggle('word-answer',state.mode==='words');
+  if(!state.started){
+    $('glyph').textContent='?';
+    $('questionPrompt').textContent='準備好了嗎？';
+    $('hint').hidden=true;
+  }
   if(state.current){
     $('glyph').textContent=state.current.ko;
     $('questionPrompt').textContent=state.mode==='letters'?'這個字母怎麼念？':state.mode==='syllables'?'試著念出這個音節':'先念出來，再猜意思。';
@@ -311,7 +322,7 @@ function showSettings(){const target=$('settings').hidden;$('settings').hidden=!
 function showHelp(){if(typeof $('helpDialog').showModal==='function')$('helpDialog').showModal();else $('helpDialog').setAttribute('open','')}
 function closeHelp(){$('helpDialog').close?.();$('helpDialog').removeAttribute('open')}
 function initialize(){
-  setSettings();resetDeck();startQuestion();
+  setSettings();resetDeck();render();
   $('mainBtn').addEventListener('click',action);
   $('skipBtn').addEventListener('click',nextQuestion);
   $('audioBtn').addEventListener('click',playAudio);
@@ -326,7 +337,7 @@ function initialize(){
   $('chartDialog').addEventListener('click',ev=>{if(ev.target===$('chartDialog'))$('chartDialog').close()});
   $('helpBtn').addEventListener('click',showHelp);
   $('closeHelp').addEventListener('click',closeHelp);
-  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters')});
+  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters');startQuestion()});
   $('helpDialog').addEventListener('click',ev=>{if(ev.target===$('helpDialog'))closeHelp()});
   const unavailable=!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window);
   $('audioBtn').disabled=unavailable;
