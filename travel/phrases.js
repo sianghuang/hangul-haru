@@ -61,12 +61,12 @@ window.TRAVEL_CATEGORIES = [
     ['길을 잃었어요.','gireul ireosseoyo.','我迷路了']
   ]},
   {id:'hotel', label:'住宿', sub:'入住、寄放行李、設施', phrases:[
-    ['체크인할게요.','chekeuinh algeyo.','我要辦理入住'],
+    ['체크인할게요.','chekeuinhalgeyo.','我要辦理入住'],
     ['제 이름으로 예약했어요.','je ireumeuro yeyakaesseoyo.','我是用自己的名字訂房的'],
     ['여권 여기 있어요.','yeogwon yeogi isseoyo.','護照在這裡'],
     ['짐을 맡길 수 있나요?','jimeul matgil su innayo?','可以寄放行李嗎？'],
     ['체크아웃은 몇 시예요?','chekeuauteun myeot siyeyo?','幾點退房？'],
-    ['늦게 체크아웃할 수 있나요?','neutge chekeu authal su innayo?','可以延後退房嗎？'],
+    ['늦게 체크아웃할 수 있나요?','neutge chekeuauthal su innayo?','可以延後退房嗎？'],
     ['와이파이 비밀번호가 뭐예요?','waipai bimilbeonhoga mwoyeyo?','Wi-Fi 密碼是什麼？'],
     ['에어컨이 안 돼요.','eeokeoni an dwaeyo.','冷氣不能使用'],
     ['수건 좀 더 주세요.','sugeon jom deo juseyo.','請再給我一些毛巾'],
