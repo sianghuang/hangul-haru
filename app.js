@@ -188,8 +188,20 @@ function startQuestion(exact){state.current=takeQuestion(exact);state.started=!!
 function nextQuestion(){startQuestion()}
 function reveal(){if(!state.current||state.revealed)return;state.revealed=true;if(state.today!==TODAY()){state.today=TODAY();state.todayCount=0}state.todayCount++;state.seen[key(state.current)]=true;persist();render();if(state.settings.autoplay)playAudio()}
 function action(){if(!state.started)startQuestion();else if(!state.revealed)reveal();else nextQuestion()}
-function changeMode(mode){if(!['letters','syllables','words'].includes(mode))return;state.mode=mode;state.started=false;state.current=null;state.revealed=false;resetDeck();render()}
-function changeSettings(){for(const id of ['letterFilter','advancedVowels','tenseConsonants','withBatchim','wordTheme','blind','random','autoplay']){state.settings[id]=['letterFilter','wordTheme'].includes(id)?$(id).value:$(id).checked}persist();state.started=false;state.current=null;state.revealed=false;resetDeck();render()}
+function changeMode(mode, exact){
+  if(!['letters','syllables','words'].includes(mode))return;
+  state.mode=mode;
+  resetDeck();
+  startQuestion(exact);
+}
+function changeSettings(){
+  for(const id of Object.keys(defaults)){
+    state.settings[id]=['letterFilter','wordTheme'].includes(id)?$(id).value:$(id).checked;
+  }
+  persist();
+  resetDeck();
+  startQuestion();
+}
 function findWordForLetter(letter){const match=(w)=>[...w.ko].some(ch=>{const p=parts(ch);return p&&(letter.type==='vowel'?p.v===letter.index:p.l===letter.index)});const candidates=WORDS.filter(match);return candidates.sort((a,b)=>a.ko.replace(/\s/g,'').length-b.ko.replace(/\s/g,'').length)[0]||WORDS[0]}
 const SIMPLE_ONSET=['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
 function syllableRoman(q){const v=VOWELS.find(x=>x.index===q.v);return SIMPLE_ONSET[q.l]+(v?.rr||'')+(FINAL_MAP[q.t]?.[1]||'')}
@@ -204,43 +216,80 @@ function currentPresentation(){const q=state.current; if(!q)return null;
     return {ko:q.ko,roman:syllableRoman(q),pronunciation:f?'最後的 '+f[0]+' 是받침（收尾子音）。':'將兩個字母排在一個音節方塊中。',word:q.word,composition:combination,note:'這是單一音節的入門參考讀法；放進完整單字後，可能發生連音或音變。',speech:q.ko};
   }
   const same=WORDS.filter(w=>w.cat===q.cat&&w.ko!==q.ko);const word=same.length?same[WORDS.indexOf(WORDS.find(w=>w.ko===q.ko))%same.length]:q;
-  return {ko:q.ko,roman:q.rr,pronunciation:CATEGORIES[q.cat]+' · 生活韓文',word,composition:null,note:'先看韓文辨認音節，再核對拼音與中文意思。單字的實際連音請以韓語發音為準。',speech:q.ko};
+  return {ko:q.ko,roman:q.rr,pronunciation:q.zh,word,composition:null,speech:q.ko};
 }
 function render(){
-  const modeNames={letters:'字母',syllables:'拼音節',words:'單字'};
-  document.querySelectorAll('.tab').forEach(b=>{const active=b.dataset.mode===state.mode;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
-  $('modeHint').textContent=state.mode==='letters'?'先學 10 個基本母音和 14 個基本子音；進階字母可在設定中加入。':state.mode==='syllables'?'一個方塊就是一個音節，試著把裡面的字母讀出來。':'練習韓國旅遊、日常與問候常用詞，揭曉中文意思。';
-  $('welcome').hidden=state.started;$('question').hidden=!state.started||state.revealed;$('answer').hidden=!state.started||!state.revealed;
-  $('skipBtn').disabled=!state.started;
-  $('mainBtn').innerHTML=(state.started?(state.revealed?'下一題':'揭曉答案'):'開始練習')+' <span>→</span>';
-  $('cardCount').textContent=state.started?'CARD '+String(state.index||1).padStart(2,'0'):'READY TO START';
-  $('cardType').textContent='韓文 · '+modeNames[state.mode];
+  document.querySelectorAll('.tab').forEach(b=>{
+    const active=b.dataset.mode===state.mode;
+    b.classList.toggle('active',active);
+    b.setAttribute('aria-selected',String(active));
+  });
+  $('question').hidden=state.revealed;
+  $('answer').hidden=!state.revealed;
+  $('mainBtn').innerHTML=(state.revealed?'下一題':'揭曉答案')+' <span>→</span>';
+  $('cardCount').textContent=String(Math.max(1,state.index)).padStart(2,'0')+' / '+state.deck.length;
   $('question').classList.toggle('word-question',state.mode==='words');
   $('answer').classList.toggle('word-answer',state.mode==='words');
-  if(state.started&&state.current){
+  if(state.current){
     $('glyph').textContent=state.current.ko;
-    $('questionPrompt').textContent=state.mode==='letters'?'這個字母怎麼念？':state.mode==='syllables'?'這個音節怎麼念？':'試著讀出來，再猜猜中文意思。';
+    $('questionPrompt').textContent=state.mode==='letters'?'這個字母怎麼念？':state.mode==='syllables'?'試著念出這個音節':'先念出來，再猜意思。';
     $('hint').hidden=state.settings.blind;
-    $('hint').textContent=state.mode==='letters'?(state.current.type==='vowel'?'母音':'子音'):state.mode==='syllables'?'1 個韓文音節':'單字練習';
-    if(state.revealed){const p=currentPresentation();$('answerGlyph').textContent=p.ko;$('roman').textContent=p.roman;$('pronunciation').textContent=p.pronunciation;
-      $('composition').hidden=!p.composition;$('compositionText').textContent=p.composition||'';
-      $('vocabHeading').textContent=state.mode==='words'?'同主題延伸單字':'連結一個真實單字';
-      $('vocabTag').textContent=CATEGORIES[p.word.cat]||'日常';$('vocabKo').textContent=p.word.ko;
-      $('vocabRoman').textContent=p.word.rr;$('vocabZh').textContent=(state.mode==='words'?state.current.zh+'　 ·　 ':'')+(state.mode==='words'?'延伸：':'')+p.word.zh;
-      $('note').textContent=p.note;
+    $('hint').textContent=state.mode==='letters'?(state.current.type==='vowel'?'母音':'子音'):state.mode==='syllables'?'1 個音節':'單字';
+    if(state.revealed){
+      const p=currentPresentation();
+      $('answerGlyph').textContent=p.ko;
+      $('roman').textContent=p.roman;
+      $('pronunciation').textContent=p.pronunciation;
+      $('composition').hidden=!p.composition;
+      $('compositionText').textContent=p.composition||'';
+      $('vocabHeading').textContent=state.mode==='words'?'延伸':'例字';
+      $('vocabKo').textContent=p.word.ko;
+      $('vocabRoman').textContent=p.word.rr;
+      $('vocabZh').textContent=p.word.zh;
+      $('vocabAudioBtn').setAttribute('aria-label','播放「'+p.word.ko+'」的韓文發音');
     }
   }
-  const items=pool(), seen=items.filter(x=>state.seen[key(x)]).length,total=items.length;
-  $('todayCount').textContent=state.today===TODAY()?state.todayCount:'0';$('seenCount').firstChild.textContent=seen;$('totalCount').textContent='/'+total;
-  $('progressTitle').textContent=modeNames[state.mode]+'練習進度';$('percent').textContent=total?Math.round(seen/total*100)+'%':'0%';$('progressBar').style.width=(total?Math.min(100,seen/total*100):0)+'%';
+  const items=pool(),seen=items.filter(x=>state.seen[key(x)]).length,total=items.length;
+  $('todayCount').textContent=state.today===TODAY()?state.todayCount:'0';
+  $('seenCount').textContent=seen;
+  $('totalCount').textContent='/'+total;
+  const progress=total?Math.min(100,Math.round(seen/total*100)):0;
+  $('progressBar').style.width=progress+'%';
+  $('progressTrack').setAttribute('aria-valuenow',String(progress));
   updateChart();
 }
-function updateChart(){const body=$('chartBody');body.replaceChildren();const arr=letterPool();for(const [title,letterType] of [['母音 VOWELS','vowel'],['子音 CONSONANTS','consonant']]){
-  const selected=arr.filter(x=>x.type===letterType);if(!selected.length)continue;
-  const section=document.createElement('section');section.className='chart-section';const h=document.createElement('h3');h.textContent=title;section.append(h);const grid=document.createElement('div');grid.className='chart-grid';
-  for(const x of selected){const btn=document.createElement('button');btn.type='button';btn.textContent=x.ko;btn.title=x.ko+' · '+x.rr;btn.classList.toggle('seen',!!state.seen['letters:'+x.ko]);btn.classList.toggle('current',state.mode==='letters'&&state.current?.ko===x.ko);
-    btn.addEventListener('click',()=>{changeMode('letters');startQuestion(x.ko);$('card').scrollIntoView({behavior:'smooth',block:'center'})});grid.append(btn)}section.append(grid);body.append(section)}
-  $('chartPanel').querySelector('summary span').textContent=$('chartPanel').open?'收合 ↑':'展開 ↓';
+function updateChart(){
+  const body=$('chartBody');
+  body.replaceChildren();
+  const arr=letterPool();
+  for(const [title,letterType] of [['母音','vowel'],['子音','consonant']]){
+    const selected=arr.filter(x=>x.type===letterType);
+    if(!selected.length)continue;
+    const section=document.createElement('section');
+    section.className='chart-section';
+    const h=document.createElement('h3');
+    h.textContent=title;
+    section.append(h);
+    const grid=document.createElement('div');
+    grid.className='chart-grid';
+    for(const x of selected){
+      const btn=document.createElement('button');
+      btn.type='button';
+      const glyph=document.createElement('span');glyph.textContent=x.ko;
+      const roman=document.createElement('small');roman.textContent=x.rr;
+      btn.append(glyph,roman);
+      btn.title='練習 '+x.ko;
+      btn.classList.toggle('seen',!!state.seen['letters:'+x.ko]);
+      btn.classList.toggle('current',state.mode==='letters'&&state.current?.ko===x.ko);
+      btn.addEventListener('click',()=>{
+        $('chartDialog').close();
+        changeMode('letters',x.ko);
+        $('card').scrollIntoView({behavior:'smooth',block:'nearest'});
+      });
+      grid.append(btn);
+    }
+    section.append(grid);body.append(section);
+  }
 }
 function speakKorean(text){
   if(!text||!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window))return;
@@ -255,34 +304,39 @@ function speakKorean(text){
   }catch(e){console.warn('Speech synthesis unavailable:',e)}
 }
 function playAudio(){const p=currentPresentation();if(p)speakKorean(p.speech)}
-function playWordAudio(){
-  if(!state.revealed)return;
-  const p=currentPresentation();
-  if(p?.word?.ko)speakKorean(p.word.ko);
-}
-
+function playWordAudio(){if(!state.revealed)return;const p=currentPresentation();if(p?.word?.ko)speakKorean(p.word.ko)}
 function setSettings(){for(const id of Object.keys(defaults)){if(['letterFilter','wordTheme'].includes(id))$(id).value=state.settings[id];else $(id).checked=!!state.settings[id]}}
 function closeSettings(){$('settings').hidden=true;$('settingBtn').setAttribute('aria-expanded','false')}
 function showSettings(){const target=$('settings').hidden;$('settings').hidden=!target;$('settingBtn').setAttribute('aria-expanded',String(target))}
 function showHelp(){if(typeof $('helpDialog').showModal==='function')$('helpDialog').showModal();else $('helpDialog').setAttribute('open','')}
 function closeHelp(){$('helpDialog').close?.();$('helpDialog').removeAttribute('open')}
-function initialize(){setSettings();resetDeck();render();
-  $('mainBtn').addEventListener('click',action);$('skipBtn').addEventListener('click',nextQuestion);$('audioBtn').addEventListener('click',playAudio);$('vocabAudioBtn').addEventListener('click',playWordAudio);
+function initialize(){
+  setSettings();resetDeck();startQuestion();
+  $('mainBtn').addEventListener('click',action);
+  $('skipBtn').addEventListener('click',nextQuestion);
+  $('audioBtn').addEventListener('click',playAudio);
+  $('vocabAudioBtn').addEventListener('click',playWordAudio);
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>changeMode(btn.dataset.mode)));
-  document.querySelectorAll('[data-go]').forEach(btn=>btn.addEventListener('click',()=>{changeMode(btn.dataset.go);window.scrollTo({top:0,behavior:'smooth'})}));
-  Object.keys(defaults).forEach(id=>$(id).addEventListener('change',changeSettings));
-  $('settingBtn').addEventListener('click',showSettings);$('closeSettings').addEventListener('click',closeSettings);
+  for(const id of Object.keys(defaults))$(id).addEventListener('change',changeSettings);
+  $('settingBtn').addEventListener('click',showSettings);
+  $('closeSettings').addEventListener('click',closeSettings);
   document.addEventListener('pointerdown',ev=>{if(!$('settingWrap').contains(ev.target))closeSettings()});
-  $('chartPanel').addEventListener('toggle',()=>{$('chartPanel').querySelector('summary span').textContent=$('chartPanel').open?'收合 ↑':'展開 ↓'});
-  $('helpBtn').addEventListener('click',showHelp);$('closeHelp').addEventListener('click',closeHelp);
-  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters');startQuestion()});
+  $('chartOpen').addEventListener('click',()=>{closeSettings();$('chartDialog').showModal()});
+  $('chartClose').addEventListener('click',()=>$('chartDialog').close());
+  $('chartDialog').addEventListener('click',ev=>{if(ev.target===$('chartDialog'))$('chartDialog').close()});
+  $('helpBtn').addEventListener('click',showHelp);
+  $('closeHelp').addEventListener('click',closeHelp);
+  $('helpStart').addEventListener('click',()=>{closeHelp();changeMode('letters')});
   $('helpDialog').addEventListener('click',ev=>{if(ev.target===$('helpDialog'))closeHelp()});
-  const ttsUnavailable=!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window);$('audioBtn').disabled=ttsUnavailable;$('vocabAudioBtn').disabled=ttsUnavailable;
-  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closeSettings();return}
-    if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.repeat||$('helpDialog').open||!$('settings').hidden)return;
-    if(ev.target.closest?.('button,select,input,textarea,summary,[contenteditable="true"]'))return;
+  const unavailable=!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window);
+  $('audioBtn').disabled=unavailable;
+  $('vocabAudioBtn').disabled=unavailable;
+  document.addEventListener('keydown',ev=>{
+    if(ev.key==='Escape'){closeSettings();return}
+    if(ev.altKey||ev.ctrlKey||ev.metaKey||ev.repeat||$('helpDialog').open||$('chartDialog').open||!$('settings').hidden)return;
+    if(ev.target.closest?.('button,select,input,textarea,[contenteditable="true"]'))return;
     if(ev.code==='Space'||ev.key==='Enter'){ev.preventDefault();action()}
-    else if(ev.key==='ArrowRight'&&state.started){ev.preventDefault();nextQuestion()}
+    else if(ev.key==='ArrowRight'){ev.preventDefault();nextQuestion()}
   });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize);else initialize();
