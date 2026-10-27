@@ -28,7 +28,7 @@ python3 -m http.server 8000
 
 瀏覽 `http://localhost:8000`，旅遊速查表位於 `http://localhost:8000/travel/`，韓劇情話位於 `http://localhost:8000/drama/`。
 
-如有 Node.js 18 以上版本，可執行 `node --test travel/smoke.test.cjs` 驗證句庫、數字和主要互動。
+如有 Node.js 18 以上版本，可執行 `node --test travel/smoke.test.cjs drama/smoke.test.cjs` 驗證旅行速查、韓劇情話、發音對齊與主要互動。
 
 ## GitHub Repository 與部署
 
@@ -55,7 +55,8 @@ hangul-haru/
 │   ├── index.html  # 韓劇情話頁面
 │   ├── drama.css   # 情話頁樣式
 │   ├── drama.js    # 搜尋／收藏／發音／複製
-│   └── lines.js    # 已核對原句與原創對白
+│   ├── lines.js    # 已核對原句與原創對白
+│   └── smoke.test.cjs # 韓劇情話功能測試
 ├── travel/
 │   ├── index.html  # 獨立旅行速查頁面
 │   ├── travel.css  # 速查頁樣式，不影響練習首頁
