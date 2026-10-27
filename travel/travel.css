@@ -34,3 +34,6 @@ footer{display:flex;justify-content:space-between;gap:16px;border-top:1px solid 
 .converted-reading .syllable-ko{font-size:28px}
 .number-aligned .syllable-ko{font-size:17px}
 }
+
+/* Secondary cross-link to the independent drama collection. */
+.drama-discovery{display:inline-flex;align-items:center;gap:6px;color:#956479;font-size:11px;font-weight:720;text-decoration:none;margin:10px 0 0;padding:7px 0}.drama-discovery:hover{text-decoration:underline}

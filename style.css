@@ -11,3 +11,6 @@ dialog{color:var(--ink);border:1px solid var(--line);background:var(--paper);box
 
 /* Travel guide entry: deliberately scoped to the header. */
 .travel-link{height:36px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 12px;border:1px solid #d7c9b9;background:#fbf4ed;border-radius:99px;color:#a8674f;font-size:12px;font-weight:750;text-decoration:none;white-space:nowrap}.travel-link:hover{color:#864b36;border-color:#b97c64;background:#faeae0}@media(max-width:380px){.top-actions{gap:6px}.travel-link{padding:0 8px;font-size:11px}.travel-link span{display:none}}
+
+/* Low-profile drama destination below the intro, never compresses the original header. */
+.drama-home-link{display:inline-flex;align-items:center;gap:7px;margin-top:14px;color:#986378;background:#f8f0f3;border:1px solid #ead8df;border-radius:999px;padding:8px 12px;text-decoration:none;font-size:12px;font-weight:750}.drama-home-link:hover{background:#f4e6ec;border-color:#d5b4c2}

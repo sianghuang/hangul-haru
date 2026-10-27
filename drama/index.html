@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="韓劇浪漫名台詞與韓劇風原創深情對白，繁體中文、韓文、羅馬拼音逐字對照，單字與整句發音。">
+  <title>韓劇情話 · 한글하루</title>
+  <link rel="stylesheet" href="./drama.css?v=20261027">
+  <script defer src="../travel/syllables.js"></script>
+  <script defer src="./lines.js?v=20261027"></script>
+  <script defer src="./drama.js?v=20261027"></script>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="../" aria-label="返回韓文練習首頁"><span class="seal" aria-hidden="true">ㅎ</span><span><strong>한글하루</strong><small>HANGUL HARU</small></span></a>
+    <nav class="cross-nav" aria-label="站內導覽">
+      <a href="../travel/">旅行速查</a>
+      <a href="../">返回練習</a>
+    </nav>
+  </header>
+  <main>
+    <header class="hero">
+      <span class="eyebrow">K-DRAMA · ROMANTIC LINES</span>
+      <h1>那些沒說完的，<em>深情。</em></h1>
+      <p>把韓劇裡的心動、想念與離別，收藏成一頁隨時能開口練習的情話。</p>
+      <div class="hero-mark" aria-hidden="true">“</div>
+      <div class="hero-note">每個韓文字塊都有羅馬拼音 · 點字塊、詞語或整句，都可以聽發音</div>
+    </header>
+    <section class="toolbar" aria-label="搜尋與篩選">
+      <div class="search-row">
+        <label class="search" for="searchInput">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="搜尋台詞、中文、韓文、劇名" aria-label="搜尋韓劇對白">
+        </label>
+        <button type="button" id="randomBtn" class="random-btn" title="隨機抽一句情話">↝ <span>抽一句</span></button>
+      </div>
+      <nav id="categoryNav" class="category-nav" aria-label="心情分類"></nav>
+      <div class="filter-bar">
+        <div id="sourceFilters" class="source-filters" role="group" aria-label="台詞來源">
+          <button type="button" data-kind="all" aria-pressed="true">全部</button>
+          <button type="button" data-kind="verified" aria-pressed="false">劇中原句</button>
+          <button type="button" data-kind="original" aria-pressed="false">原創韓劇風</button>
+        </div>
+        <span id="resultCount" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+    <div id="featured" class="featured" hidden></div>
+    <div id="sections"></div>
+    <p class="disclaimer">「劇中原句」為可核對來源的簡短節錄，卡片可開啟外部參考；「原創韓劇風」是學習用途的全新創作，不是電視劇逐字台詞。羅馬拼音和分字發音僅供初學參考，連音及音變請以整句語音為準。</p>
+  </main>
+  <footer><span>한글하루 · 韓劇情話速查</span><div><a href="../travel/">旅行 Cheat Sheet</a><a href="../">韓文練習</a></div></footer>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
