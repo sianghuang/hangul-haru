@@ -269,37 +269,74 @@ function render(){
   $('progressTrack').setAttribute('aria-valuenow',String(progress));
   updateChart();
 }
+function openLetterFromChart(letter){
+  const next={...state.settings};
+  // The chart is a full reference, independent of the active practice filter.
+  // Selecting an excluded letter opts that letter family into practice.
+  if(letter.type==='vowel'){
+    if(next.letterFilter==='consonant')next.letterFilter='all';
+    if(letter.advanced)next.advancedVowels=true;
+  }else{
+    if(next.letterFilter==='vowel')next.letterFilter='all';
+    if(letter.advanced)next.tenseConsonants=true;
+  }
+  state.settings=next;
+  setSettings();
+  persist();
+  $('chartDialog').close();
+  changeMode('letters',letter.ko);
+  $('card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 function updateChart(){
   const body=$('chartBody');
   body.replaceChildren();
-  const arr=letterPool();
-  for(const [title,letterType] of [['母音','vowel'],['子音','consonant']]){
-    const selected=arr.filter(x=>x.type===letterType);
-    if(!selected.length)continue;
+  const currentPractice=new Set(letterPool().map(letter=>letter.ko));
+  const groups=[
+    {title:'基本母音',letters:VOWELS.filter(x=>!x.advanced),advanced:false},
+    {title:'延伸母音',letters:VOWELS.filter(x=>x.advanced),advanced:true},
+    {title:'基本子音',letters:CONSONANTS.filter(x=>!x.advanced),advanced:false},
+    {title:'緊音子音',letters:CONSONANTS.filter(x=>x.advanced),advanced:true}
+  ];
+  const summary=document.createElement('p');
+  summary.className='chart-summary';
+  summary.textContent='完整 40 個字母 · 目前練習 '+currentPractice.size+' 個';
+  body.append(summary);
+  for(const group of groups){
     const section=document.createElement('section');
     section.className='chart-section';
-    const h=document.createElement('h3');
-    h.textContent=title;
-    section.append(h);
+    const head=document.createElement('div');
+    head.className='chart-section-heading';
+    const title=document.createElement('h3');
+    title.textContent=group.title+' · '+group.letters.length;
+    head.append(title);
+    if(group.advanced){
+      const tag=document.createElement('span');
+      tag.className='chart-advanced-label';
+      tag.textContent='延伸學習';
+      head.append(tag);
+    }
+    section.append(head);
     const grid=document.createElement('div');
     grid.className='chart-grid';
-    for(const x of selected){
+    for(const x of group.letters){
       const btn=document.createElement('button');
       btn.type='button';
-      const glyph=document.createElement('span');glyph.textContent=x.ko;
-      const roman=document.createElement('small');roman.textContent=x.rr;
+      const glyph=document.createElement('span');
+      glyph.textContent=x.ko;
+      const roman=document.createElement('small');
+      roman.textContent=x.rr;
       btn.append(glyph,roman);
-      btn.title='練習 '+x.ko;
+      const inPractice=currentPractice.has(x.ko);
+      btn.title=(inPractice?'練習 ':'加入練習並查看 ')+x.ko;
+      btn.setAttribute('aria-label',btn.title);
       btn.classList.toggle('seen',!!state.seen['letters:'+x.ko]);
       btn.classList.toggle('current',state.mode==='letters'&&state.current?.ko===x.ko);
-      btn.addEventListener('click',()=>{
-        $('chartDialog').close();
-        changeMode('letters',x.ko);
-        $('card').scrollIntoView({behavior:'smooth',block:'nearest'});
-      });
+      btn.classList.toggle('not-in-practice',!inPractice);
+      btn.addEventListener('click',()=>openLetterFromChart(x));
       grid.append(btn);
     }
-    section.append(grid);body.append(section);
+    section.append(grid);
+    body.append(section);
   }
 }
 function speakKorean(text){

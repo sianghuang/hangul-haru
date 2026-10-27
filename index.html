@@ -7,7 +7,7 @@
   <meta name="description" content="韓文從零開始：24 個基本字母、拼音節、常用單字，搭配盲看與真人式韓語語音合成練習。">
   <title>한글하루 · 韓文入門練習</title>
   <link rel="stylesheet" href="./style.css">
-  <script defer src="./app.js?v=20261026-ready"></script>
+  <script defer src="./app.js?v=20261027-full-chart"></script>
 </head>
 <body>
 <div class="shell">
@@ -21,7 +21,7 @@
         <section id="settings" class="settings" hidden>
           <div class="settings-title"><strong>練習設定</strong><button type="button" id="closeSettings" class="close-text">關閉 ×</button></div>
           <label class="row-setting">字母範圍<select id="letterFilter"><option value="all">全部基本字母</option><option value="vowel">只練母音</option><option value="consonant">只練子音</option></select></label>
-          <label class="tick"><input id="advancedVowels" type="checkbox"> 加入複合母音（11）</label>
+          <label class="tick"><input id="advancedVowels" type="checkbox"> 加入延伸母音（11）</label>
           <label class="tick"><input id="tenseConsonants" type="checkbox"> 加入緊音子音（5）</label>
           <label class="tick"><input id="withBatchim" type="checkbox"> 拼音節加入收尾子音</label>
           <hr>
@@ -95,7 +95,7 @@
 </div>
 
 <dialog id="chartDialog" class="chart-dialog" aria-labelledby="chartTitle">
-  <div class="chart-header"><div><h2 id="chartTitle">字母表</h2><p>點字母直接練習 · <span class="seen-guide">綠色代表已看過</span></p></div><button type="button" id="chartClose" class="dialog-close" aria-label="關閉字母表">×</button></div>
+  <div class="chart-header"><div><h2 id="chartTitle">完整字母表</h2><p>40 個韓文字母全部顯示 · 點灰色字母可加入練習 · <span class="seen-guide">綠色代表已看過</span></p></div><button type="button" id="chartClose" class="dialog-close" aria-label="關閉字母表">×</button></div>
   <div id="chartBody" class="chart-body"></div>
 </dialog>
 
