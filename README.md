@@ -16,6 +16,8 @@
 
 > 音節的字母分解與羅馬拼音是入門輔助。韓語連音、收尾子音、同化和音變不能單靠羅馬拼音完整呈現。
 
+- **韓劇情話 Cheat Sheet**：獨立 `drama/` 頁面，劇中經典短句與明確標示的原創深情對白；繁中翻譯、逐韓文字塊羅馬拼音、字塊／單詞／整句語音、搜尋、收藏、隨機抽句。
+
 ## 快速啟動
 
 直接開啟 `index.html`，或在本資料夾執行：
@@ -24,7 +26,7 @@
 python3 -m http.server 8000
 ```
 
-瀏覽 `http://localhost:8000`，旅遊速查表位於 `http://localhost:8000/travel/`。
+瀏覽 `http://localhost:8000`，旅遊速查表位於 `http://localhost:8000/travel/`，韓劇情話位於 `http://localhost:8000/drama/`。
 
 如有 Node.js 18 以上版本，可執行 `node --test travel/smoke.test.cjs` 驗證句庫、數字和主要互動。
 
@@ -49,6 +51,11 @@ hangul-haru/
 ├── index.html  # UI、教學與控制項
 ├── style.css   # 排版與手機版樣式
 ├── app.js      # 韓文字母、詞彙、練習邏輯
+├── drama/
+│   ├── index.html  # 韓劇情話頁面
+│   ├── drama.css   # 情話頁樣式
+│   ├── drama.js    # 搜尋／收藏／發音／複製
+│   └── lines.js    # 已核對原句與原創對白
 ├── travel/
 │   ├── index.html  # 獨立旅行速查頁面
 │   ├── travel.css  # 速查頁樣式，不影響練習首頁
