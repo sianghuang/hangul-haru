@@ -9,6 +9,7 @@ const DRAMA_SCENES = [
     ['나는 네 옆에 있을게.','naneun ne yeope isseulge.','我會留在你身邊。','淚之女王 · 눈물의 여왕','https://sports.donga.com/ent/article/all/20240507/124815808/1'],
     ['좋아해. 내가 너 좋아한다고.','joahae. naega neo joahandago.','喜歡你，我說我喜歡你。','背著善宰跑 · 선재 업고 튀어','https://littlefunthings.netlify.app/koreanstudy/0077/'],
     ['날 추앙해요.','nal chuanghaeyo.','請崇拜我。','我的出走日記 · 나의 해방일지','https://www.hankyung.com/article/202204116665H'],
+    ['무슨 일이 있어도 당신 기억할 거니까.','museun iri isseodo dangsin gieokhal geonikka.','不管發生什麼，我都會記得你。','愛的迫降 · 사랑의 불시착','https://yapa0423.tistory.com/960'],
     ['나 너 좋아하냐?','na neo joahanya?','我是不是喜歡你？','繼承者們 · 상속자들','https://www.insight.co.kr/newsRead.php?ArtNo=104061'],
     ['길라임 씨는 몇 살 때부터 그렇게 예뻤나?','gillaim ssineun myeot sal ttaebuteo geureoke yeppeonna?','吉羅琳小姐，妳從幾歲開始這麼漂亮？','秘密花園 · 시크릿 가든','https://www.insight.co.kr/newsRead.php?ArtNo=104061'],
     ['여름의 한가운데에 우리가 있었다.','yeoreumui hangaundee uriga isseotda.','盛夏的正中央，有我們。','二十五，二十一 · 스물다섯 스물하나','https://www.namu.moe/w/스물다섯%20스물하나/명대사'],
@@ -28,7 +29,7 @@ const DRAMA_SCENES = [
   {id:'longing',title:'想念與距離',subtitle:'說不出口的想念，最適合下雨天',items:[
     ['보고 싶어. 오늘은 유난히 더.','bogo sipeo. oneureun yunanhi deo.','好想你，今天尤其想。'],
     ['멀리 있어도 내 마음은 항상 네 곁에 있어.','meolli isseodo nae maeumeun hangsang ne gyeote isseo.','就算距離很遠，我的心也一直在你身旁。'],
-    ['너 없는 밤은 왜 이렇게 길까?','neo eomneun bameun wae ireoke gilkk a?','沒有你的夜晚，怎麼這麼漫長？'],
+    ['너 없는 밤은 왜 이렇게 길까?','neo eomneun bameun wae ireoke gilkka?','沒有你的夜晚，怎麼這麼漫長？'],
     ['하루 종일 네 목소리가 생각났어.','haru jongil ne moksoriga saenggangnasseo.','一整天都想著你的聲音。'],
     ['전화기 너머로라도 네 웃음이 듣고 싶어.','jeonhwagi neomeororado ne useumi deutgo sipeo.','即使隔著電話，也想聽見你的笑聲。'],
     ['같은 하늘 아래 있다는 게 위로가 돼.','gateun haneul arae itdaneun ge wiroga dwae.','想到我們還在同一片天空下，就覺得安慰。'],
