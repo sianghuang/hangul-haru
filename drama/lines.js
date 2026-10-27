@@ -31,7 +31,7 @@ const DRAMA_SCENES = [
     ['멀리 있어도 내 마음은 항상 네 곁에 있어.','meolli isseodo nae maeumeun hangsang ne gyeote isseo.','就算距離很遠，我的心也一直在你身旁。'],
     ['너 없는 밤은 왜 이렇게 길까?','neo eomneun bameun wae ireoke gilkka?','沒有你的夜晚，怎麼這麼漫長？'],
     ['하루 종일 네 목소리가 생각났어.','haru jongil ne moksoriga saenggangnasseo.','一整天都想著你的聲音。'],
-    ['전화기 너머로라도 네 웃음이 듣고 싶어.','jeonhwagi neomeororado ne useumi deutgo sipeo.','即使隔著電話，也想聽見你的笑聲。'],
+    ['전화기 너머로라도 네 웃음을 듣고 싶어.','jeonhwagi neomeororado ne useumeul deutgo sipeo.','即使隔著電話，也想聽見你的笑聲。'],
     ['같은 하늘 아래 있다는 게 위로가 돼.','gateun haneul arae itdaneun ge wiroga dwae.','想到我們還在同一片天空下，就覺得安慰。'],
     ['너를 기다리는 시간도 내겐 소중해.','neoreul gidarineun sigando naegen sojunghae.','連等待你的時間，對我都很珍貴。']
   ]},
