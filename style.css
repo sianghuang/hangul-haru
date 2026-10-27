@@ -14,3 +14,13 @@ dialog{color:var(--ink);border:1px solid var(--line);background:var(--paper);box
 
 /* Low-profile drama destination below the intro, never compresses the original header. */
 .drama-home-link{display:inline-flex;align-items:center;gap:7px;margin-top:14px;color:#986378;background:#f8f0f3;border:1px solid #ead8df;border-radius:999px;padding:8px 12px;text-decoration:none;font-size:12px;font-weight:750}.drama-home-link:hover{background:#f4e6ec;border-color:#d5b4c2}
+
+/* The alphabet chart is a complete reference; dim only letters outside practice. */
+.chart-summary{font-size:11px;line-height:1.5;font-weight:700;color:#617b65;background:#f0f4ed;padding:10px 12px;border-radius:9px;margin:2px 0 13px}
+.chart-section-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 11px}
+.chart-section-heading h3{margin:0}
+.chart-advanced-label{color:#aa7e69;background:#f7eee7;border:1px solid #efded4;border-radius:99px;padding:4px 8px;font-size:10px;font-weight:700}
+.chart-grid button.not-in-practice{background:#f6f5f2;border-style:dashed;border-color:#dedbd4}
+.chart-grid button.not-in-practice small{color:#a4a49e}
+.chart-grid button.not-in-practice:hover{background:#fff4ee;border-color:#cba18e}
+.chart-grid button.seen,.chart-grid button.seen.not-in-practice{background:#edf4ec;border-style:solid;border-color:#dbe9d8}
